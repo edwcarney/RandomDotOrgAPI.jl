@@ -15,6 +15,7 @@ Use various functions from https://random.org (q.v.).
 - generate_decimal_fractions(): obtain random numbers on the interval (0,1)
 - generate_uuids(): obtain random bytes in various formats
 - generate_blobs(): generate bit blobs of sizes in multiples of 8 in base64 or hex
+- pull_data(): extract data from RDO response (Dictionary)
 
 Github repository at: https://github.com/edwcarney/RandomDotOrgAPI
 
