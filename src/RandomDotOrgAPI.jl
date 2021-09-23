@@ -31,7 +31,7 @@ const myapikeyzeros = "00000000-0000-0000-0000-000000000000"
 
 
 export  get_usage, check_usage, get_result, verify_signature, generate_integers, generate_integer_sequences, generate_strings, generate_gaussians,
-        generate_decimal_fractions, generate_uuids, generate_blobs
+        generate_decimal_fractions, generate_uuids, generate_blobs, pull_data
 
 """
     Get the current bit quota from Random.org
@@ -588,7 +588,6 @@ Otherwise, returns vector of data
 
 # Arguments
 - `RDOresp`: response from RDO in form of dictionary
-
 """
 function pull_data(RDOresp)
     dataval = RDOresp["result"]["random"]["data"]
