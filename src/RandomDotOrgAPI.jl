@@ -26,7 +26,7 @@ using HTTP, JSON
 # using OrderedCollections
 
 const url = "https://api.random.org/json-rpc/2/invoke"
-const myapikey = "9e2e019b-f414-4b37-bda1-df506af728ae"
+include("RandomDotOrg.key")
 const myapikeyzeros = "00000000-0000-0000-0000-000000000000"
 
 
