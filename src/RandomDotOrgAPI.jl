@@ -38,7 +38,7 @@ function get_usage(; apiType = "basic")
         "jsonrpc" => "2.0",
         "method" => "getUsage",
         "params" => Dict(
-            "apiKey" => myapikeyzeros
+            "apiKey" => myapikey
             ),
         "id" => 22407
     )
@@ -198,7 +198,7 @@ function generate_integers(n = 100::Number; min = 1, max = 20, base = 10, numeri
     )
 
     apiType=="basic" ? push!(genIntegers, "method" => "generateIntegers") : push!(genIntegers, "method" => "generateSignedIntegers")
-    apiType=="basic" ? push!(genIntegers["params"], "apiKey" =>   myapikeyzeros) : push!(genIntegers["params"], "apiKey" =>  myapikey)
+    apiType=="basic" ? push!(genIntegers["params"], "apiKey" =>   myapikey) : push!(genIntegers["params"], "apiKey" =>  myapikey)
 
     r = HTTP.request("POST", url,
                 ["Content-Type" => "application/json"],
@@ -275,7 +275,7 @@ function generate_integer_sequences(n = 10::Number, length = 10::Number; min = 1
     )
 
     apiType=="basic" ? push!(genIntegerSequences, "method" => "generate_integer_sequences") : push!(genIntegerSequences, "method" => "generateSignedIntegerSequences")
-    apiType=="basic" ? push!(genIntegerSequences["params"], "apiKey" =>   myapikeyzeros) : push!(genIntegerSequences["params"], "apiKey" =>  myapikey)
+    apiType=="basic" ? push!(genIntegerSequences["params"], "apiKey" =>   myapikey) : push!(genIntegerSequences["params"], "apiKey" =>  myapikey)
 
     r = HTTP.request("POST", url,
                 ["Content-Type" => "application/json"],
@@ -346,7 +346,7 @@ function generate_strings(n = 10::Number, length = 5::Number, characters = "abcd
     )
 
     apiType=="basic" ? push!(genStrings, "method" => "generateStrings") : push!(genStrings, "method" => "generateSignedStrings")
-    apiType=="basic" ? push!(genStrings["params"], "apiKey" =>   myapikeyzeros) : push!(genStrings["params"], "apiKey" =>  myapikey)
+    apiType=="basic" ? push!(genStrings["params"], "apiKey" =>   myapikey) : push!(genStrings["params"], "apiKey" =>  myapikey)
 
     @show JSON.json(genStrings)
 
@@ -409,7 +409,7 @@ function generate_gaussians(n = 10::Number, mean = 0.0, stdev = 1.0, digits = 10
     )
 
     apiType=="basic" ? push!(genGaussians, "method" => "generateGaussians") : push!(genGaussians, "method" => "generateSignedGaussians")
-    apiType=="basic" ? push!(genGaussians["params"], "apiKey" =>   myapikeyzeros) : push!(genGaussians["params"], "apiKey" =>  myapikey)
+    apiType=="basic" ? push!(genGaussians["params"], "apiKey" =>   myapikey) : push!(genGaussians["params"], "apiKey" =>  myapikey)
 
     r = HTTP.request("POST", url,
                 ["Content-Type" => "application/json"],
@@ -462,7 +462,7 @@ function generate_decimal_fractions(n = 10, digits = 10; check=true, replace = t
     )
 
     apiType=="basic" ? push!(genDecimalFractions, "method" => "generateDecimalFractions") : push!(genDecimalFractions, "method" => "generateSignedDecimalFractions")
-    apiType=="basic" ? push!(genDecimalFractions["params"], "apiKey" =>   myapikeyzeros) : push!(genDecimalFractions["params"], "apiKey" =>  myapikey)
+    apiType=="basic" ? push!(genDecimalFractions["params"], "apiKey" =>   myapikey) : push!(genDecimalFractions["params"], "apiKey" =>  myapikey)
 
     r = HTTP.request("POST", url,
             ["Content-Type" => "application/json"],
@@ -509,7 +509,7 @@ function generate_uuids(n = 10::Number; check=true, apiType = "basic")
 )
 
     apiType=="basic" ? push!(genUUIDs, "method" => "generateUUIDs") : push!(genUUIDs, "method" => "generateSignedUUIDs")
-    apiType=="basic" ? push!(genUUIDs["params"], "apiKey" =>   myapikeyzeros) : push!(genUUIDs["params"], "apiKey" =>  myapikey)
+    apiType=="basic" ? push!(genUUIDs["params"], "apiKey" =>   myapikey) : push!(genUUIDs["params"], "apiKey" =>  myapikey)
 
     r = HTTP.request("POST", url,
             ["Content-Type" => "application/json"],
@@ -566,7 +566,7 @@ function generate_blobs(n = 10::Number, size = 100; format = "base64", check=tru
     )
 
     apiType=="basic" ? push!(genBlobs, "method" => "generateBlobs") : push!(genBlobs, "method" => "generateSignedBlobs")
-    apiType=="basic" ? push!(genBlobs["params"], "apiKey" =>   myapikeyzeros) : push!(genBlobs["params"], "apiKey" =>  myapikey)
+    apiType=="basic" ? push!(genBlobs["params"], "apiKey" =>   myapikey) : push!(genBlobs["params"], "apiKey" =>  myapikey)
 
     r = HTTP.request("POST", url,
             ["Content-Type" => "application/json"],
