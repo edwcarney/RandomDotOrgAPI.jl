@@ -25,7 +25,11 @@ module RandomDotOrgAPI
 using HTTP, JSON
 # using OrderedCollections
 
-# include("RandomDotOrg.key")
+if isfile("RandomDotOrg.key")
+    include("RandomDotOrg.key")
+else
+    const myapikey = "00000000-0000-0000-0000-000000000000"
+end
 const url = "https://api.random.org/json-rpc/4/invoke"
 const myapikey = "00000000-0000-0000-0000-000000000000"
 const myapikeyzeros = "00000000-0000-0000-0000-000000000000"
