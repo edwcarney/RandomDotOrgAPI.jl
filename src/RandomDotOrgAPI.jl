@@ -29,7 +29,7 @@ const url = "https://api.random.org/json-rpc/4/invoke"
 if isfile("./RandomDotOrg.key")
     include("./RandomDotOrg.key")
 else
-    exit("No API key file")
+    exit(99)
 end
 
 export  get_usage, check_usage, get_result, verify_signature, generate_integers, generate_integer_sequences, generate_strings, generate_gaussians,
