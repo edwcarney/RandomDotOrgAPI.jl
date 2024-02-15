@@ -26,8 +26,8 @@ using HTTP, JSON
 # using OrderedCollections
 
 const url = "https://api.random.org/json-rpc/4/invoke"
-if isfile("RandomDotOrg.key")
-    include("RandomDotOrg.key")
+if isfile("./RandomDotOrg.key")
+    include("./RandomDotOrg.key")
 else
     exit("No API key file")
 end
