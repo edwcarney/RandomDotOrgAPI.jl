@@ -256,7 +256,7 @@ julia> generate_integer_sequences(1, max=10)
     "requestsLeft"  => 792747
 ```
 """
-function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20 base = 10, check = true, replace = true, apiType = "basic")
+function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20, base = 10, check = true, replace = true, apiType = "basic")
     (length > (min - (max + 1))) && return "Length must be less than 10000"
     
     (min < -1f+09 || max > 1f+09 || min > max) && return "Range must be between -1e9 and 1e9"
