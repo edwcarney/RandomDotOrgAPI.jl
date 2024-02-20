@@ -588,16 +588,21 @@ Otherwise, returns vector of data
 - `RDOresp`: response from RDO in form of dictionary
 """
 function pull_data(RDOresp)
-    dataval = RDOresp["result"]["random"]["data"]
-    if isa(dataval[1], Number)
-        return convert(Vector{Real},dataval)
-    elseif isa(dataval[1], Vector{Any})
-        if isa(dataval[1][1], Number)
-            return [[convert(Real, x) for x in y] for y in dataval]
+    if ["random"] in keys(RDOresp["result"])
+        dataval = RDOresp["result"]["random"]["data"]
+        if isa(dataval[1], Number)
+            return convert(Vector{Real},dataval)
+        elseif isa(dataval[1], Vector{Any})
+            if isa(dataval[1][1], Number)
+                return [[convert(Real, x) for x in y] for y in dataval]
+            else
+                return dataval
+            end
         else
             return dataval
         end
     else
+        dataval = RDOresp["result"]["bitsLeft"]
         return dataval
     end
 end
