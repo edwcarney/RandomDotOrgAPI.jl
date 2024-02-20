@@ -587,7 +587,7 @@ Otherwise, returns vector of data
 # Arguments
 - `RDOresp`: response from RDO in form of dictionary
 """
-function pull_data(RDOresp; var_type=)
+function pull_data(RDOresp)
     if "random" in keys(RDOresp["result"])
         dataval = RDOresp["result"]["random"]["data"]
         if isa(dataval[1], Number)
