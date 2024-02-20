@@ -57,23 +57,23 @@ end;
 
 """
 
-    check_usage(minimum = 500::Number)
+    check_usage(minimum = 500)
 
     Test for sufficient quota to insure response. This should be set to match
     user's needs.
 """
-function check_usage(minimum = 500::Number)
+function check_usage(minimum = 500)
 
     return (get_usage()["result"]["bitsLeft"] >= minimum);
 end;
 
 """
-    get_result(serialnumber::Int)
+    get_result(serialnumber)
 
     get_result(): get a stored signed result from RDO (stored >= 24 hours)
 
 """
-function get_result(serialNumber::Int)
+function get_result(serialNumber)
     get_result = Dict(
         "jsonrpc" => "2.0",
         "method" => "getResult",
@@ -126,7 +126,7 @@ function verify_signature(result::Dict)
 end
 
 """
-    generate_integers(n = 100::Number, min = 1, max = 20, base = 10, parse=true, check = true, replace = true, apitype = "basic")
+    generate_integers(n = 100, min = 1, max = 20, base = 10, parse=true, check = true, replace = true, apitype = "basic")
 
 Get `n` random integers on the interval `[min, max]` as strings
 in one of 4 `base` values--[binary (2), octal (8), decimal (10), or hexadecimal (16)]
@@ -134,7 +134,7 @@ All numbers, except base 10, are returned as strings.
 
 # Arguments
 - `max`,`min` : [-1e9, 1e9]
-- `base::Integer`: retrieved Integer format [2, 8, 10, 16]
+- `baseeger`: retrieved Integer format [2, 8, 10, 16]
 - `numeric`: return numbers instead of strings (base = 10, only)
 - `check::Bool`: perform a call to `checkQuota` before making request
 - `replace::Bool`: use sampling with replacement
@@ -173,7 +173,7 @@ julia> generate_integers(5, max=200)
     "requestsLeft"  => 773510
 ```
 """
-function generate_integers(n = 100::Number; min = 1, max = 20, base = 10, numeric = true, check = true, replace=true, apiType="basic")
+function generate_integers(n = 100; min = 1, max = 20, base = 10, numeric = true, check = true, replace=true, apiType="basic")
     (n < 1 || n > 10000) && return "Requests must be between 1 and 10,000 numbers"
 
     (min < -1f+09 || max > 1f+09 || min > max) && return "Range must be between -1e9 and 1e9"
@@ -211,7 +211,7 @@ end
 
 
 """
-    generate_integer_sequences(n = 1; min = 1::Number, max = 20::Number, col = 1, check = true, replace=true, apiType="basic")
+    generate_integer_sequences(n = 1; min = 1, max = 20, col = 1, check = true, replace=true, apiType="basic")
 
 Get a randomized interval `[min, max]`. Returns (max - min + 1) randomized integers
 All numbers are returned as strings (as Random.org sends them).
@@ -220,7 +220,7 @@ All numbers are returned as strings (as Random.org sends them).
 - `length` : size of the returned sequence; may be a tuple
 - `min` : no less than 1; may be a tuple, as [1, 1]
 - `max` : must be [-1e9, 1e9]; may be a tuple, as [69, 26]
-- `base::Integer`: retrieved Integer format [2, 8, 10, 16]
+- `baseeger`: retrieved Integer format [2, 8, 10, 16]
 - `check::Bool`: perform a call to `checkQuota` before making request
 - `replace::Bool`: use sampling with replacement
 - `apiType::String`: "basic" or "signed"; key of zeros, if "basic"
@@ -256,7 +256,7 @@ julia> generate_integer_sequences(1, max=10)
     "requestsLeft"  => 792747
 ```
 """
-function generate_integer_sequences(n = 10::Number, length = 10::Number; min = 1::Number, max = 20::Number, base = 10, check = true, replace = true, apiType = "basic")
+function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20, base = 10, check = true, replace = true, apiType = "basic")
     # (min < -1f+09 || max > 1f+09 || min > max) && return "Range must be between -1e9 and 1e9"
 
     (check && !check_usage()) && return "random.org suggests to wait until tomorrow"
@@ -288,13 +288,13 @@ end
 
 """
 
-    generate_strings(n=10::Number, length=5, characters="abcdefghijklmnopqrstuvwxyz"; check=true)
+    generate_strings(n=10, length=5, characters="abcdefghijklmnopqrstuvwxyz"; check=true)
 
 Get `n` random strings of length `len`
 
 # Arguments
-- `n::number` : number of strings
-- `length::Number` : length of strings [1, 32]
+- `n` : number of strings
+- `length` : length of strings [1, 32]
 - `characters::String`: strings formed from this set of characters
 - `check::Bool`: perform a call to `checkQuota` before making request
 - `replace::Bool`: use sampling with replacement (strings might be duplicated)
@@ -328,7 +328,7 @@ generate_strings(1, 15, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012
     "requestsLeft"  => 773264
 ```
 """
-function generate_strings(n = 10::Number, length = 5::Number, characters = "abcdefghijklmnopqrstuvwxyz"::String; check = true, replace = true, apiType="basic")
+function generate_strings(n = 10, length = 5, characters = "abcdefghijklmnopqrstuvwxyz"::String; check = true, replace = true, apiType="basic")
     (n < 1 || n > 10000) && return "1 to 10,000 requests only"
 
     (length < 1 || length > 32) && return "Length must be between 1 and 32"
@@ -361,7 +361,7 @@ end
 
 """
 
-    generate_gaussians(n = 10::Number, mean = 0.0, stdev = 1.0, digits = 10; check = true, replace = true, apiType = "basic")
+    generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check = true, replace = true, apiType = "basic")
 
 Get n numbers from a Gaussian distribution with `mean` and `stdev`.
 Returns strings in `dec` decimal places.
@@ -387,7 +387,7 @@ julia> generate_gaussians(500, 5, 2.5, 10, apiType="basic")
     "requestsLeft"  => 791750
 ```
 """
-function generate_gaussians(n = 10::Number, mean = 0.0, stdev = 1.0, digits = 10; check = true, apiType = "basic")
+function generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check = true, apiType = "basic")
     (n < 1 || n > 10000) && return "Requests must be between 1 and 10,000 numbers"
 
     (mean < -1f+06 || mean > 1f+06) && return "Mean must be between -1e6 and 1e6"
@@ -421,7 +421,7 @@ function generate_gaussians(n = 10::Number, mean = 0.0, stdev = 1.0, digits = 10
 end
 
 """
-    generate_decimal_fractions(n = 10::Number; digits = 5, check = true, replace = true)
+    generate_decimal_fractions(n = 10; digits = 5, check = true, replace = true)
 
 Get n decimal fractions on the interval (0,1).
 Returns strings in `digits` decimal places.
@@ -474,7 +474,7 @@ function generate_decimal_fractions(n = 10, digits = 10; check=true, replace = t
 end
 
 """
-    generate_uuids(n = 10::Number; check=true, apiType = "basic")
+    generate_uuids(n = 10; check=true, apiType = "basic")
 
 Get n UUIDs.
 Returns n UUIDs as strings.
@@ -496,7 +496,7 @@ generate_uuids(1)
     "requestsLeft"  => 774929
 ```
 """
-function generate_uuids(n = 10::Number; check=true, apiType = "basic")
+function generate_uuids(n = 10; check=true, apiType = "basic")
     (n < 1 || n > 1000) && return "Requests must be between 1 and 1000 numbers"
 
     (check && !check_usage()) && return "random.org suggests to wait until tomorrow"
@@ -521,7 +521,7 @@ function generate_uuids(n = 10::Number; check=true, apiType = "basic")
 end
 
 """
-    generate_blobs(n = 10::Number, size = 80; format = 'base64', check = true, apiType = "basic")
+    generate_blobs(n = 10, size = 80; format = 'base64', check = true, apiType = "basic")
 
 Get n Blobs.
 Returns n Blobs as strings in format requested.
@@ -545,7 +545,7 @@ Dict{String,Any} with 5 entries:
     "requestsLeft"  => 774042
 ```
 """
-function generate_blobs(n = 10::Number, size = 100; format = "base64", check=true, apiType = "basic")
+function generate_blobs(n = 10, size = 100; format = "base64", check=true, apiType = "basic")
     (n < 1 || n > 100) && return "Requests must be between 1 and 100 numbers"
 
     (size < 1 || size > 2^20) && return "Size must be between 1 and 1048576"
@@ -587,7 +587,7 @@ Otherwise, returns vector of data
 # Arguments
 - `RDOresp`: response from RDO in form of dictionary
 """
-function pull_data(RDOresp)
+function pull_data(RDOresp; var_type=)
     if "random" in keys(RDOresp["result"])
         dataval = RDOresp["result"]["random"]["data"]
         if isa(dataval[1], Number)
