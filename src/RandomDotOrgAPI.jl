@@ -126,7 +126,7 @@ function verify_signature(result::Dict)
 end
 
 """
-    generate_integers(n = 100, min = 1, max = 20, base = 10, parse=true, check = true, replace = true, apitype = "basic")
+    generate_integers(n = 100, min = 1, max = 20, base = 10, check = true, replace = true, apitype = "basic")
 
 Get `n` random integers on the interval `[min, max]` as strings
 in one of 4 `base` values--[binary (2), octal (8), decimal (10), or hexadecimal (16)]
@@ -134,8 +134,7 @@ All numbers, except base 10, are returned as strings.
 
 # Arguments
 - `max`,`min` : [-1e9, 1e9]
-- `baseeger`: retrieved Integer format [2, 8, 10, 16]
-- `numeric`: return numbers instead of strings (base = 10, only)
+- `base`: retrieved Integer format [2, 8, 10, 16]
 - `check::Bool`: perform a call to `checkQuota` before making request
 - `replace::Bool`: use sampling with replacement
 - `apiType::String`: "basic" or "signed"; key of zeros if "basic"
@@ -173,7 +172,7 @@ julia> generate_integers(5, max=200)
     "requestsLeft"  => 773510
 ```
 """
-function generate_integers(n = 100; min = 1, max = 20, base = 10, numeric = true, check = true, replace=true, apiType="basic")
+function generate_integers(n = 100; min = 1, max = 20, base = 10, check = true, replace=true, apiType="basic")
     (n < 1 || n > 10000) && return "Requests must be between 1 and 10,000 numbers"
 
     (min < -1f+09 || max > 1f+09 || min > max) && return "Range must be between -1e9 and 1e9"
@@ -211,16 +210,17 @@ end
 
 
 """
-    generate_integer_sequences(n = 1; min = 1, max = 20, col = 1, check = true, replace=true, apiType="basic")
+    generate_integer_sequences(n = 1; length = 10, min = 1, max = 20, base=10, check = true, replace=true, apiType="basic")
 
 Get a randomized interval `[min, max]`. Returns (max - min + 1) randomized integers
 All numbers are returned as strings (as Random.org sends them).
 
 # Arguments
+- `n` : number of sequences
 - `length` : size of the returned sequence; may be a tuple
 - `min` : no less than 1; may be a tuple, as [1, 1]
 - `max` : must be [-1e9, 1e9]; may be a tuple, as [69, 26]
-- `baseeger`: retrieved Integer format [2, 8, 10, 16]
+- `base`: retrieved Integer format [2, 8, 10, 16]
 - `check::Bool`: perform a call to `checkQuota` before making request
 - `replace::Bool`: use sampling with replacement
 - `apiType::String`: "basic" or "signed"; key of zeros, if "basic"
@@ -256,8 +256,10 @@ julia> generate_integer_sequences(1, max=10)
     "requestsLeft"  => 792747
 ```
 """
-function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20, base = 10, check = true, replace = true, apiType = "basic")
-    # (min < -1f+09 || max > 1f+09 || min > max) && return "Range must be between -1e9 and 1e9"
+function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20; base = 10, check = true, replace = true, apiType = "basic")
+    (length > (min - (max + 1))) && return "Length must be less than 10000"
+    
+    (min < -1f+09 || max > 1f+09 || min > max) && return "Range must be between -1e9 and 1e9"
 
     (check && !check_usage()) && return "random.org suggests to wait until tomorrow"
 
@@ -288,7 +290,7 @@ end
 
 """
 
-    generate_strings(n=10, length=5, characters="abcdefghijklmnopqrstuvwxyz"; check=true)
+    generate_strings(n=10, length=5, characters="abcdefghijklmnopqrstuvwxyz"; check=true, replace=false, apiType='basic')
 
 Get `n` random strings of length `len`
 
@@ -368,10 +370,12 @@ Returns strings in `dec` decimal places.
 Scientific notation only for now.
 
 # Arguments
+- `n` : number of gaussian values (1 - 10000)
 - `mean`, `stdev` : between [-1e6, 1e6]
-- `significantDigits` : decimal places [2,14]
+- `digits` : decimal places [2,14]
 - `check::Bool`: perform a call to `checkQuota` before making request
-
+- `replace::Bool`: use sampling with replacement (strings might be duplicated)
+- `apiType::String`: "basic" or "signed"; "basic" sends zeros as  myapikey
 
 # Example requesting 500 Gaussians with mean = 5.0, stdev = 2.5, 10 significant digits
 ```
