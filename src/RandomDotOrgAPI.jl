@@ -20,6 +20,8 @@ Use various functions from https://random.org (q.v.).
 Github repository at: https://github.com/edwcarney/RandomDotOrgAPI
 
 """
+module RandomDotOrgAPI
+
 using HTTP, JSON
 # using OrderedCollections
 
@@ -599,3 +601,5 @@ function pull_data(RDOresp)
         return dataval
     end
 end
+
+end; # module
