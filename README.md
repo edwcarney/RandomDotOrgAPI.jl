@@ -8,7 +8,7 @@ myapikey = "00000000-0000-0000-0000-000000000000"
 myapikey_signed = "00000000-0000-0000-0000-000000000000"
 ```
 
-Functions using HTTP are available in the following repository: https://github.com/edwcarney/RandomDotOrg.jl
+Functions to obtain random numbers from Random.org using HTTP instead of the API are available in the following repository: https://github.com/edwcarney/RandomDotOrg.jl
 
 From the RANDOM.ORG <a href="https://www.random.org/faq">FAQ (Q4.1)</a>:
 <blockquote>The RANDOM.ORG setup uses an array of radios that pick up atmospheric noise. Each radio generates approximately 12,000 bits per second. The random bits produced by the radios are used as the raw material for all the different generators you see on RANDOM.ORG. Each time you use one of the generators, you spend some bits. By enforcing a limit on the number of bits you can use per day, the quota system prevents any one person from hogging all the numbers. (Believe us, this was a big problem before we implemented the quota system.)</blockquote>
