@@ -26,8 +26,9 @@ using HTTP, JSON
 # using OrderedCollections
 
 const url = "https://api.random.org/json-rpc/4/invoke"
-if isfile("myapikey.jl")
-    include("myapikey.jl")
+apiKeyFile = string(pwd(),"/","myapikey.jl")
+if isfile(apiKeyFile)
+    include(apiKeyFile)
 else
     myapikey = "00000000-0000-0000-0000-000000000000"
     myapikey_signed = "00000000-0000-0000-0000-000000000000"
