@@ -38,7 +38,13 @@ export  get_usage, check_usage, get_result, verify_signature, generate_integers,
         generate_decimal_fractions, generate_uuids, generate_blobs, pull_data
 
 """
-    Get the current bit quota from Random.org
+    get_usage(apiType="basic")
+
+Get the current bit quota from Random.org
+
+# Argument
+- `apiType::String`: "basic" or "signed"; key of zeros if "basic"
+
 """
 function get_usage(; apiType = "basic")
     get_usage1 = Dict(
@@ -63,14 +69,19 @@ end;
 
 """
 
-    check_usage(minimum = 500)
+    check_usage(minimum = 500; apiType="basic")
 
     Test for sufficient quota to insure response. This should be set to match
     user's needs.
-"""
-function check_usage(minimum = 500)
 
-    return (get_usage()["result"]["bitsLeft"] >= minimum);
+# Arguments
+- `minimum::Int`: minimum number of bits remaining required
+- `apiType::String`: "basic" or "signed"; key of zeros if "basic"
+
+"""
+function check_usage(minimum = 500; apiType="basic")
+
+    return (get_usage(apiType=apiType)["result"]["bitsLeft"] >= minimum);
 end;
 
 """
