@@ -6,7 +6,7 @@ Julia module with functions to provide support for obtaining random numbers gene
 # substitute your API key from Random.org
 myapikey = "00000000-0000-0000-0000-000000000000"
 ```
-If the <b>myapikey.jl</b> file is present, all calls to the functions in <b>RandomDotOrgAPI</b> will be made using your personal API key and automatically signed with a hash of your personal API key.
+If the <b>myapikey.jl</b> file is present, all calls to the functions in <b>RandomDotOrgAPI</b> will be made using your personal API key and automatically signed with a hash of your personal API key (as will any calls with ```apiType = "basic"```).
 
 Calls to the API, in the absence of the <b>myapikey.jl</b> file and using "signed" as the apiType will still work (with the exception of <b>verify_signature()</b>, as the signature will not be associated with your personal API).
 
