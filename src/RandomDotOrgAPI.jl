@@ -562,7 +562,7 @@ function generate_uuids(n = 10; check=true, apiType = "basic")
 end
 
 """
-    generate_blobs(n = 10, size = 80; format = 'base64', check = true, apiType = "basic")
+    generate_blobs(n = 10; size = 80, format = 'base64', check = true, apiType = "basic")
 
 Get n Blobs.
 Returns n Blobs as strings in format requested.
@@ -573,20 +573,18 @@ Returns n Blobs as strings in format requested.
 - `format` : "base64" [default] or "hex"
 - `check::Bool`: perform a call to `checkQuota` before making request
 
-# Example to obtain 1 UUIDs
+# Example to obtain 1 blob in 
 ```
-generate_blobs(1)
-Dict{String,Any} with 5 entries:
-    "bitsLeft"      => 3335873
-    "random" => Dict{String,Any} with 2 entries:
-        "data"           => Any["342ae094e29e9814ef21"]
-        "completionTime" => "2020-08-03 21:14:38Z"
-    "advisoryDelay" => 3650
-    "bitsUsed"      => 32
-    "requestsLeft"  => 774042
+generate_blobs(1, size=8)["result"]
+Dict{String, Any} with 5 entries:
+  "bitsLeft"      => 247147
+  "random"        => Dict{String, Any}("data"=>Any["yg=="], "completionTime"=>"…
+  "advisoryDelay" => 1380
+  "bitsUsed"      => 8
+  "requestsLeft"  => 944
 ```
 """
-function generate_blobs(n = 10, size = 100; format = "base64", check=true, apiType = "basic")
+function generate_blobs(n = 10; size = 80, format = "base64", check=true, apiType = "basic")
     global myapikey
 
     (n < 1 || n > 100) && return "Requests must be between 1 and 100 numbers"
