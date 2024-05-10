@@ -26,11 +26,10 @@ using HTTP, JSON
 # using OrderedCollections
 
 const url = "https://api.random.org/json-rpc/4/invoke"
-apiKeyFile = string(pwd(),"/","myapikey.jl")
+apiKeyFile = "myapikey.jl"
 myapikey = "00000000-0000-0000-0000-000000000000"
 if isfile(apiKeyFile)
     include(apiKeyFile)
-    println(string("API key = ", myapikey))
 end
 
 export  get_usage, check_usage, get_result, verify_signature, generate_integers, generate_integer_sequences, generate_strings, generate_gaussians,
