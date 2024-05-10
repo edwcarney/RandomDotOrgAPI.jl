@@ -569,7 +569,7 @@ function generate_uuids(n = 10; check=true, apiType = "basic")
 end
 
 """
-    generate_blobs(n = 10; size = 80, format = 'base64', check = true, apiType = "basic")
+    generate_blobs(n = 10; size = 80, format = 'hex', check = true, apiType = "basic")
 
 Get n Blobs.
 Returns n Blobs as strings in format requested.
@@ -586,7 +586,7 @@ generate_blobs(1, size=8)["result"]
 Dict{String, Any} with 5 entries:
   "bitsLeft"      => 247147
   "random"        => Dict{String, Any} with 2 entries:
-                      "data" => Any["07cHxn3fsGLhBA=="]
+                      "data" => Any["4a9dcdd3c7b3b80c052e"]
                       "completionTime" => "2024-05-10 19:09:38Z"
   "advisoryDelay" => 1380
   "bitsUsed"      => 8
@@ -597,10 +597,10 @@ Dict{String, Any} with 5 entries:
 ```
 pull_data(generate_blobs(1, size=8))
 1-element Vector{Any}:
- "07cHxn3fsGLhBA=="
+ "4a9dcdd3c7b3b80c052e"
 ```
 """
-function generate_blobs(n = 10; size = 80, format = "base64", check=true, apiType = "basic")
+function generate_blobs(n = 10; size = 80, format = "hex", check=true, apiType = "basic")
     global myapikey
 
     (n < 1 || n > 100) && return "Requests must be between 1 and 100 numbers"
