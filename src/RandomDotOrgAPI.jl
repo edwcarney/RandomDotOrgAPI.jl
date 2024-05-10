@@ -521,17 +521,24 @@ Returns n UUIDs as strings.
 - `n`: number of UUIDs to generate
 - `check::Bool`: perform a call to `checkQuota` before making request
 
-# Example to obtain 1 UUIDs
+# Example to obtain 1 UUID
 ```
-generate_uuids(1)
-"result" => Dict{String,Any} with 5 entries:
-    "bitsLeft"      => 3396647
-        "random"        => Dict{String,Any} with 2 entries:
-            "data"           => Any["12598e3a-c96a-4b16-bea4-b7d404717080"]
-            "completionTime" => "2020-08-01 21:48:39Z"
-    "advisoryDelay" => 3070
-    "bitsUsed"      => 122
-    "requestsLeft"  => 774929
+generate_uuids(1)["result"]
+Dict{String, Any} with 5 entries:
+  "bitsLeft"      => 246381
+  "random"        => Dict{String, Any} with 2 entries:
+                      "data" => Any["9b11a3d9-0552-4000-9d60-3c7cd41be852"]
+                      "completionTime" => "2024-05-10 19:04:14Z"
+  "advisoryDelay" => 970
+  "bitsUsed"      => 122
+  "requestsLeft"  => 936
+```
+
+# Example to obtain 1 UUID using the pull_data function
+```
+pull_data(generate_uuids(1)["result"])
+1-element Vector{Any}:
+ "f1fd84a4-0ab4-407a-9d60-cb9396eb4360"
 ```
 """
 function generate_uuids(n = 10; check=true, apiType = "basic")
@@ -573,15 +580,24 @@ Returns n Blobs as strings in format requested.
 - `format` : "base64" [default] or "hex"
 - `check::Bool`: perform a call to `checkQuota` before making request
 
-# Example to obtain 1 blob in 
+# Example to obtain 1 blob
 ```
 generate_blobs(1, size=8)["result"]
 Dict{String, Any} with 5 entries:
   "bitsLeft"      => 247147
-  "random"        => Dict{String, Any}("data"=>Any["yg=="], "completionTime"=>"…
+  "random"        => Dict{String, Any} with 2 entries:
+                      "data" => Any["07cHxn3fsGLhBA=="]
+                      "completionTime" => "2024-05-10 19:09:38Z"
   "advisoryDelay" => 1380
   "bitsUsed"      => 8
   "requestsLeft"  => 944
+```
+
+# Example to obtain 1 blob using the pull_data function
+```
+pull_data(generate_blobs(1, size=8))
+1-element Vector{Any}:
+ "07cHxn3fsGLhBA=="
 ```
 """
 function generate_blobs(n = 10; size = 80, format = "base64", check=true, apiType = "basic")
