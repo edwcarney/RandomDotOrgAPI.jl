@@ -26,17 +26,17 @@ using HTTP, JSON
 # using OrderedCollections
 
 const url = "https://api.random.org/json-rpc/4/invoke"
-apiKeyFile = string(pwd(),"/myapikey.jl")
-myapikey = "00000000-0000-0000-0000-000000000000"
-if isfile(apiKeyFile)
-    include(apiKeyFile)
-end
+# apiKeyFile = string(pwd(),"/","myapikey.jl")
+# myapikey = "00000000-0000-0000-0000-000000000000"
+# if isfile(apiKeyFile)
+#     include(apiKeyFile)
+# end
 
 export  get_usage, check_usage, get_result, verify_signature, generate_integers, generate_integer_sequences, generate_strings, generate_gaussians,
         generate_decimal_fractions, generate_uuids, generate_blobs, pull_data
 
 """
-    get_usage(apiType="basic")
+    get_usage(apiKey)
 
 Get the current bit quota from Random.org
 
@@ -44,14 +44,13 @@ Get the current bit quota from Random.org
 - `apiType::String`: "basic" or "signed"; key of zeros if "basic"
 
 """
-function get_usage(; apiType = "basic")
-    global myapikey
+function get_usage(; apiKey="00000000-0000-0000-0000-000000000000")
 
     get_usage1 = Dict(
         "jsonrpc" => "2.0",
         "method" => "getUsage",
         "params" => Dict(
-            "apiKey" => myapikey
+            "apiKey" => apiKey
             ),
         "id" => 22407
     )
@@ -69,7 +68,7 @@ end;
 
 """
 
-    check_usage(minimum = 500; apiType="basic")
+    check_usage(minimum = 500; apiKey)
 
     Test for sufficient quota to insure response. This should be set to match
     user's needs.
@@ -79,25 +78,24 @@ end;
 - `apiType::String`: "basic" or "signed"; key of zeros if "basic"
 
 """
-function check_usage(minimum = 500; apiType="basic")
+function check_usage(minimum = 500; apiKey="00000000-0000-0000-0000-000000000000")
 
-    return (get_usage(apiType=apiType)["result"]["bitsLeft"] >= minimum);
+    return (get_usage(apiKey=apiKey)["result"]["bitsLeft"] >= minimum);
 end;
 
 """
-    get_result(serialnumber)
+    get_result(serialnumber, apikey)
 
-    get_result(): get a stored signed result from RDO (stored >= 24 hours)
+    get a stored signed result from RDO (stored >= 24 hours)
 
 """
-function get_result(serialNumber)
-    global myapikey
+function get_result(serialNumber; apiKey = "00000000-0000-0000-0000-000000000000")
 
     get_result = Dict(
         "jsonrpc" => "2.0",
         "method" => "getResult",
         "params" => Dict(
-            "apiKey" => myapikey,
+            "apiKey" => apiKey,
             "serialNumber" => serialNumber
         ),
         "id" => 22407
@@ -145,7 +143,8 @@ function verify_signature(result::Dict)
 end
 
 """
-    generate_integers(n = 100, min = 1, max = 20, base = 10, check = true, replace = true, apitype = "basic")
+    generate_integers(n = 100, min = 1, max = 20, base = 10, check = true, replace = true,
+                    apitype = "basic", apiKey)
 
 Get `n` random integers on the interval `[min, max]` as strings
 in one of 4 `base` values--[binary (2), octal (8), decimal (10), or hexadecimal (16)]
@@ -191,8 +190,8 @@ julia> generate_integers(5, max=200)
     "requestsLeft"  => 773510
 ```
 """
-function generate_integers(n = 100; min = 1, max = 20, base = 10, check = true, replace=true, apiType="basic")
-    global myapikey
+function generate_integers(n = 100; min = 1, max = 20, base = 10, check = true, replace=true,
+                            apiType="basic", apiKey="00000000-0000-0000-0000-000000000000")
     
     (n < 1 || n > 10000) && return "Requests must be between 1 and 10,000 numbers"
 
@@ -202,9 +201,6 @@ function generate_integers(n = 100; min = 1, max = 20, base = 10, check = true, 
 
     (check && !check_usage()) && return "random.org suggests to wait until tomorrow"
 
-#     urlbase = "https://www.random.org/integers/"
-#     urltxt = @sprintf("%s?num=%d&min=%d&max=%d&col=%d&base=%d&format=plain&rnd=new",
-#                     urlbase, n, Int(min), Int(max), col, base)
     genIntegers = Dict{String, Any}(
                 "jsonrpc" => "2.0",
                 "method" => "generate_integers",
@@ -214,13 +210,12 @@ function generate_integers(n = 100; min = 1, max = 20, base = 10, check = true, 
                         "max" => max,
                         "base" => base,
                         "replacement" => replace,
-                        "apiKey" =>   myapikey
+                        "apiKey" =>   apiKey
                 ),
                 "id" => 22407
     )
 
     apiType=="basic" ? push!(genIntegers, "method" => "generateIntegers") : push!(genIntegers, "method" => "generateSignedIntegers")
-    # apiType=="basic" ? push!(genIntegers["params"], "apiKey" =>   myapikey) : push!(genIntegers["params"], "apiKey" =>  myapikey_signed)
 
     r = HTTP.request("POST", url,
                 ["Content-Type" => "application/json"],
@@ -232,7 +227,8 @@ end
 
 
 """
-    generate_integer_sequences(n = 1; length = 10, min = 1, max = 20, base=10, check = true, replace=true, apiType="basic")
+    generate_integer_sequences(n = 1; length = 10, min = 1, max = 20, base=10, check = true, replace=true,
+                                apiType="basic", apiKey="00000000-0000-0000-0000-000000000000")
 
 Get a randomized interval `[min, max]`. Returns (max - min + 1) randomized integers
 All numbers are returned as strings (as Random.org sends them).
@@ -245,7 +241,8 @@ All numbers are returned as strings (as Random.org sends them).
 - `base`: retrieved Integer format [2, 8, 10, 16]
 - `check::Bool`: perform a call to `checkQuota` before making request
 - `replace::Bool`: use sampling with replacement
-- `apiType::String`: "basic" or "signed"; key of zeros, if "basic"
+- `apiType::String`: "basic" or "signed"
+- `apiKey::String`: "00000000-0000-0000-0000-000000000000"
 
 Returns a Dict with results in "result", data are nested in ["random"]["data"]. Multiple sequences
 must be teased out with deeper slicing. For example, the first sequence in a two sequence return
@@ -278,8 +275,8 @@ julia> generate_integer_sequences(1, max=10)
     "requestsLeft"  => 792747
 ```
 """
-function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20, base = 10, check = true, replace = true, apiType = "basic")
-    global myapikey
+function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20, base = 10, check = true, replace = true,
+                                    apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
 
     (length > (min - (max + 1))) && return "Length must be less than 10000"
     
@@ -297,13 +294,12 @@ function generate_integer_sequences(n = 10, length = 10; min = 1, max = 20, base
                 "max" => max,
                 "base" => base,
                 "replacement" => replace,
-                "apiKey" => myapikey
+                "apiKey" => apiKey
         ),
         "id" => 22407
     )
 
     apiType=="basic" ? push!(genIntegerSequences, "method" => "generate_integer_sequences") : push!(genIntegerSequences, "method" => "generateSignedIntegerSequences")
-    # apiType=="basic" ? push!(genIntegerSequences["params"], "apiKey" =>   myapikey) : push!(genIntegerSequences["params"], "apiKey" =>  myapikey_signed)
 
     r = HTTP.request("POST", url,
                 ["Content-Type" => "application/json"],
@@ -315,7 +311,8 @@ end
 
 """
 
-    generate_strings(n=10, length=5, characters="abcdefghijklmnopqrstuvwxyz"; check=true, replace=false, apiType='basic')
+    generate_strings(n=10, length=5, characters="abcdefghijklmnopqrstuvwxyz"; check=true, replace=false,
+                    apiType='basic', apiKey="00000000-0000-0000-0000-000000000000")
 
 Get `n` random strings of length `len`
 
@@ -325,7 +322,8 @@ Get `n` random strings of length `len`
 - `characters::String`: strings formed from this set of characters
 - `check::Bool`: perform a call to `checkQuota` before making request
 - `replace::Bool`: use sampling with replacement (strings might be duplicated)
-- `apiType::String`: "basic" or "signed"; "basic" sends zeros as  myapikey
+- `apiType::String`: "basic" or "signed"
+- `apiKey::String`: "00000000-0000-0000-0000-000000000000"
 
 # Examples
 ```
@@ -355,8 +353,8 @@ generate_strings(1, 15, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012
     "requestsLeft"  => 773264
 ```
 """
-function generate_strings(n = 10, length = 5, characters = "abcdefghijklmnopqrstuvwxyz"::String; check = true, replace = true, apiType="basic")
-    global myapikey
+function generate_strings(n = 10, length = 5, characters = "abcdefghijklmnopqrstuvwxyz"::String; check = true, replace = true,
+    apiType="basic", apiKey="00000000-0000-0000-0000-000000000000")
     
     (n < 1 || n > 10000) && return "1 to 10,000 requests only"
 
@@ -371,13 +369,12 @@ function generate_strings(n = 10, length = 5, characters = "abcdefghijklmnopqrst
                 "length" => length,
                 "characters" => characters,
                 "replacement" => replace,
-                "apiKey" =>   myapikey
+                "apiKey" =>   apiKey
         ),
         "id" => 22407
     )
 
     apiType=="basic" ? push!(genStrings, "method" => "generateStrings") : push!(genStrings, "method" => "generateSignedStrings")
-    # apiType=="basic" ? push!(genStrings["params"], "apiKey" =>   myapikey) : push!(genStrings["params"], "apiKey" =>  myapikey_signed)
 
     @show JSON.json(genStrings)
 
@@ -391,7 +388,8 @@ end
 
 """
 
-    generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check = true, replace = true, apiType = "basic")
+    generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check = true, replace = true,
+                        apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
 
 Get n numbers from a Gaussian distribution with `mean` and `stdev`.
 Returns strings in `dec` decimal places.
@@ -419,8 +417,8 @@ julia> generate_gaussians(500, 5, 2.5, 10, apiType="basic")
     "requestsLeft"  => 791750
 ```
 """
-function generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check = true, apiType = "basic")
-    global myapikey
+function generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check = true,
+                            apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
 
     (n < 1 || n > 10000) && return "Requests must be between 1 and 10,000 numbers"
 
@@ -439,13 +437,12 @@ function generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check 
                         "mean" => mean,
                         "standardDeviation" => stdev,
                         "significantDigits" => digits,
-                        "apiKey" =>   myapikey
+                        "apiKey" =>   apiKey
                 ),
                 "id" => 22407
     )
 
     apiType=="basic" ? push!(genGaussians, "method" => "generateGaussians") : push!(genGaussians, "method" => "generateSignedGaussians")
-    # apiT ype=="basic" ? push!(genGaussians["params"], "apiKey" =>   myapikey) : push!(genGaussians["params"], "apiKey" =>  myapikey_signed)
 
     r = HTTP.request("POST", url,
                 ["Content-Type" => "application/json"],
@@ -456,7 +453,7 @@ function generate_gaussians(n = 10, mean = 0.0, stdev = 1.0, digits = 10; check 
 end
 
 """
-    generate_decimal_fractions(n = 10; digits = 5, check = true, replace = true)
+    generate_decimal_fractions(n = 10; digits = 5, check = true, replace = true, apiType, apiKey)
 
 Get n decimal fractions on the interval (0,1).
 Returns strings in `digits` decimal places.
@@ -480,9 +477,9 @@ generate_decimal_fractions(5, 10, replace=false)
     "requestsLeft"  => 790030
 ```
 """
-function generate_decimal_fractions(n = 10, digits = 10; check=true, replace = true, apiType = "basic")
-    global myapikey
-
+function generate_decimal_fractions(n = 10, digits = 10; check=true, replace = true,
+                                    apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
+ 
     (n < 1 || n > 10000) && return "Requests must be between 1 and 10,000 numbers"
 
     (digits < 1 || digits > 14) && return "Decimal places must be between 1 and 14"
@@ -495,13 +492,12 @@ function generate_decimal_fractions(n = 10, digits = 10; check=true, replace = t
                 "n" => n,
                 "decimalPlaces" => digits,
                 "replacement" => replace,
-                "apiKey" =>   myapikey
+                "apiKey" =>   apiKey
         ),
         "id" => 22407
     )
 
-    apiType=="basic" ? push!(genDecimalFractions, "method" => "generateDecimalFractions") : push!(genDecimalFractions, "method" => "generateSignedDecimalFractions")
-    # apiType=="basic" ? push!(genDecimalFractions["params"], "apiKey" =>   myapikey) : push!(genDecimalFractions["params"], "apiKey" =>  myapikey_signed)
+    apiType=="basic" ? push!(genDecimalFractions, "method" => "generateDecimalFractions") : push!(genDecimalFractions, "method" => "generateSignedDecimalFractions")   # apiType=="basic" ? push!(genDecimalFractions["params"], "apiKey" =>   myapikey) : push!(genDecimalFractions["params"], "apiKey" =>  myapikey_signed)
 
     r = HTTP.request("POST", url,
             ["Content-Type" => "application/json"],
@@ -512,7 +508,7 @@ function generate_decimal_fractions(n = 10, digits = 10; check=true, replace = t
 end
 
 """
-    generate_uuids(n = 10; check=true, apiType = "basic")
+    generate_uuids(n = 10; check=true, apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
 
 Get n UUIDs.
 Returns n UUIDs as strings.
@@ -521,28 +517,20 @@ Returns n UUIDs as strings.
 - `n`: number of UUIDs to generate
 - `check::Bool`: perform a call to `checkQuota` before making request
 
-# Example to obtain 1 UUID
+# Example to obtain 1 UUIDs
 ```
-generate_uuids(1)["result"]
-Dict{String, Any} with 5 entries:
-  "bitsLeft"      => 246381
-  "random"        => Dict{String, Any} with 2 entries:
-                      "data" => Any["9b11a3d9-0552-4000-9d60-3c7cd41be852"]
-                      "completionTime" => "2024-05-10 19:04:14Z"
-  "advisoryDelay" => 970
-  "bitsUsed"      => 122
-  "requestsLeft"  => 936
-```
-
-# Example to obtain 1 UUID using the pull_data function
-```
-pull_data(generate_uuids(1)["result"])
-1-element Vector{Any}:
- "f1fd84a4-0ab4-407a-9d60-cb9396eb4360"
+generate_uuids(1)
+"result" => Dict{String,Any} with 5 entries:
+    "bitsLeft"      => 3396647
+        "random"        => Dict{String,Any} with 2 entries:
+            "data"           => Any["12598e3a-c96a-4b16-bea4-b7d404717080"]
+            "completionTime" => "2020-08-01 21:48:39Z"
+    "advisoryDelay" => 3070
+    "bitsUsed"      => 122
+    "requestsLeft"  => 774929
 ```
 """
-function generate_uuids(n = 10; check=true, apiType = "basic")
-    global myapikey
+function generate_uuids(n = 10; check=true, apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
 
     (n < 1 || n > 1000) && return "Requests must be between 1 and 1000 numbers"
 
@@ -552,14 +540,13 @@ function generate_uuids(n = 10; check=true, apiType = "basic")
         "jsonrpc" => "2.0",
         "params" => Dict{String, Any}(
                 "n" => n,
-                "apiKey" =>   myapikey
+                "apiKey" =>   apiKey
         ),
         "id" => 22407
 )
 
     apiType=="basic" ? push!(genUUIDs, "method" => "generateUUIDs") : push!(genUUIDs, "method" => "generateSignedUUIDs")
-    # apiType=="basic" ? push!(genUUIDs["params"], "apiKey" =>   myapikey) : push!(genUUIDs["params"], "apiKey" =>  myapikey_signed)
-
+    
     r = HTTP.request("POST", url,
             ["Content-Type" => "application/json"],
             JSON.json(genUUIDs))
@@ -569,7 +556,8 @@ function generate_uuids(n = 10; check=true, apiType = "basic")
 end
 
 """
-    generate_blobs(n = 10; size = 80, format = 'hex', check = true, apiType = "basic")
+    generate_blobs(n = 10, size = 80; format = 'base64', check = true,
+                    apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
 
 Get n Blobs.
 Returns n Blobs as strings in format requested.
@@ -580,28 +568,21 @@ Returns n Blobs as strings in format requested.
 - `format` : "base64" [default] or "hex"
 - `check::Bool`: perform a call to `checkQuota` before making request
 
-# Example to obtain 1 blob
+# Example to obtain 1 UUIDs
 ```
-generate_blobs(1, size=8)["result"]
-Dict{String, Any} with 5 entries:
-  "bitsLeft"      => 247147
-  "random"        => Dict{String, Any} with 2 entries:
-                      "data" => Any["4a9dcdd3c7b3b80c052e"]
-                      "completionTime" => "2024-05-10 19:09:38Z"
-  "advisoryDelay" => 1380
-  "bitsUsed"      => 8
-  "requestsLeft"  => 944
-```
-
-# Example to obtain 1 blob using the pull_data function
-```
-pull_data(generate_blobs(1, size=8))
-1-element Vector{Any}:
- "4a9dcdd3c7b3b80c052e"
+generate_blobs(1)
+Dict{String,Any} with 5 entries:
+    "bitsLeft"      => 3335873
+    "random" => Dict{String,Any} with 2 entries:
+        "data"           => Any["342ae094e29e9814ef21"]
+        "completionTime" => "2020-08-03 21:14:38Z"
+    "advisoryDelay" => 3650
+    "bitsUsed"      => 32
+    "requestsLeft"  => 774042
 ```
 """
-function generate_blobs(n = 10; size = 80, format = "hex", check=true, apiType = "basic")
-    global myapikey
+function generate_blobs(n = 10, size = 100; format = "base64", check=true,
+                        apiType = "basic", apiKey="00000000-0000-0000-0000-000000000000")
 
     (n < 1 || n > 100) && return "Requests must be between 1 and 100 numbers"
 
@@ -619,13 +600,12 @@ function generate_blobs(n = 10; size = 80, format = "hex", check=true, apiType =
                 "n" => n,
                 "size" => size,
                 "format" => format,
-                "apiKey" =>   myapikey
+                "apiKey" => apiKey
         ),
         "id" => 22407
     )
 
     apiType=="basic" ? push!(genBlobs, "method" => "generateBlobs") : push!(genBlobs, "method" => "generateSignedBlobs")
-    # apiType=="basic" ? push!(genBlobs["params"], "apiKey" =>   myapikey) : push!(genBlobs["params"], "apiKey" =>  myapikey_signed)
 
     r = HTTP.request("POST", url,
             ["Content-Type" => "application/json"],
