@@ -636,9 +636,9 @@ function pull_data(RDOresp)
             else
                 return dataval
             end
-        else
-            return dataval
-        end
+    elseif "authenticity" in keys(RDOresp["result"])
+        dataval = RDOresp["result"]["authenticity"]
+        return dataval
     else
         dataval = RDOresp["result"]["bitsLeft"]
         return dataval
