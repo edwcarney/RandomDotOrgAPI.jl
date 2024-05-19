@@ -23,7 +23,6 @@ Github repository at: https://github.com/edwcarney/RandomDotOrgAPI
 module RandomDotOrgAPI
 
 using HTTP, JSON
-# using OrderedCollections
 
 const url = "https://api.random.org/json-rpc/4/invoke"
 
